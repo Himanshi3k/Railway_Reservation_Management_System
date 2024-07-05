@@ -1,0 +1,20 @@
+import csv
+obj=open("traindet.csv","a",newline="")
+obj1=csv.writer(obj)
+x=int(input("Enter the no. of trains to be entered"))
+for i in range(x):
+    L=[]
+    trainno=int(input("Enter the train no."))
+    trainname=input("Enter the train name")
+    date=input("Enter date(dd/mm/yyyy)")
+    time=input("Enter time")
+    depar=input("Enter departure destination")
+    arrival=input("Enter the arrival destination")
+    L=[trainno,trainname,date,time,depar,arrival]
+    obj1.writerow(L)
+obj.close()
+obj=open("traindet.csv","r")
+x=csv.reader(obj)
+for i in x:
+    print(i)
+obj.close()

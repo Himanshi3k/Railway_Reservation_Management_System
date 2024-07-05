@@ -1,0 +1,168 @@
+import csv
+def menu():
+    print("INDIAN RAILWAYS")
+    print("1.Train details")
+    print("2.Reservation")
+    print("3.Cancel Reservation")
+    print("4.PNR Status")
+    print("5.exit")
+    n=int(input("Enter your choice (eg:1,2,3 etc.)"))
+    if n==1:
+        traindetails()
+    if n==2:
+        reserve()
+    if n==3:
+        canreserve()
+    if n==4:
+        pnr()
+        
+def traindetails():
+    obj=open("traindet.csv","r")
+    x=csv.reader(obj)
+    for i in x:
+        print(i)
+    obj.close()
+    n=input("Do you want to continue (Y/N)")
+    if n in "yY":
+        menu()
+
+
+def reserve():
+    x=False
+    while x==False:
+        curdate=
+        date=input('Enter the date you want to go on(DD/MM/YYYY)')
+        if date[6:10]==curdate[6:10] and (int(date[3:5])>int(curdate[3:5])):
+            x=True
+            print('Please fill the further information')
+        elif date[6:10]==curdate[6:10] and (int(date[3:5])==int(curdate[3:5]) and  int(date[0:2])>=int(curdate[0:2])):
+            x=True
+            print('Please fill the following information')
+        else:
+            print('Invalid Date, Please try again')
+    place1=input('Enter the city of departure(Fill in capitals):')
+    place2=input('Enter the city of arrival(Fill in capitals):')
+    freq=int(input('Enter the number of passengers:'))
+    count=0
+    u=[]
+    f=open("traindet.csv","r")                           
+    read=csv.reader(f)
+    next(read)
+    for i in read:
+        u.append(i)
+    for i in range(len(u)):
+        if u[i][2]==date and u[i][4]==place1 and u[i][5]==place2 :
+            count+=1                                                     
+            print(u[i])
+    if count==0:
+         print('No trains found')
+         print('Reverting back to the menu')
+         menu()
+    else:
+        trainno=input('Enter the train number with which you want to travel:')
+        O=open("traindet.csv","r")                           #opening file
+        read=csv.reader(O)
+        next(read)
+        for i in read:
+            if i[0]==trainno and i[2]==date and (i[4]==place1 and i[5]==place2):
+                time=i[3]
+        O.close()
+        x=0
+        myfile=open("passen.csv","r")
+        csvreader=csv.reader(myfile)
+        for i in csvreader:
+            if i[0]==trainno and (i[5]==place1 and i[6]==place2):
+                x+=1
+                
+        if x==100:
+            print('No seats available')
+            print('Reverting back to the menu')
+            myfile.close()
+            menu()
+            
+        else:
+            seat=100-x
+            print('Please fill the following details')
+            if freq<=seat:
+                length=freq
+            else:
+                length=seat
+                print('Only',seat,'seats available')
+            myfile.close()
+        ac=0
+        nc=0
+        obj1=open("passen.csv","a",newline="")
+        m=csv.writer(obj1)
+        for j in range(length):
+            with open("New.csv","r")as b:
+               z=csv.reader(b)
+               k=[]
+               for i in z:
+                   pn=int(i[-1])+1
+                   i.append(pn)
+            with open("New.csv","w",newline="")as c:
+                s=csv.writer(c)
+                s.writerow(i)
+                
+            name=input('Enter name of passenger:')
+            cls=int(input('1=AC,2=NONAC choose your option'))
+            if cls==1:
+                cls='AC'
+                ac+=1
+            else:
+                cls='NON-AC'
+                nc+=1
+            l=[trainno,pn,name,date,time,place1,place2,cls]
+            m.writerow(l)
+            print("Your PNR no. is",l[1])
+        print('Total amount payable for seats=Rs',1000*ac+800*nc)
+        print('Seats booked successfully')
+        obj1.close()
+        v=input('Do you want to continue?(Y/N)')
+        if v in'Yy':
+            menu()
+            
+def canreserve():
+    with open("passen.csv","r") as obj:
+        x=csv.reader(obj)
+        L=[]
+        a=0
+        p=input("Enter your PNR No.")
+        for i in x:
+            if i[1]==p:
+                a=1
+                print("Reservation Cancelled")
+                pass
+            else:
+                L.append(i)
+    with open("passen.csv","w",newline="") as obj1:
+        y=csv.writer(obj1)
+        y.writerows(L)
+    if a==0:
+        print("Please enter valid PNR no.")
+    n=input("Do you want to continue (Y/N)")
+    if n in "yY":
+        menu()
+    
+def pnr():
+    x=input("Enter your PNR no.")
+    obj=open("passen.csv","r")
+    m=csv.reader(obj)
+    a=0
+    for i in m:
+        if i[1]==x:
+            print("Train no.",i[0])
+            print("PNR no.",i[1])
+            print("Name",i[2])
+            print("Date of Train",i[3])
+            print("Time",i[4])
+            print("Departure",i[5])
+            print("Arrival",i[6])
+            print("AC/NON-AC",i[7])
+            a+=1
+    if a==0:
+        print("Please enter valid PNR no.")
+    n=input("Do you want to continue (Y/N)")
+    if n in "yY":
+        menu()
+menu()
